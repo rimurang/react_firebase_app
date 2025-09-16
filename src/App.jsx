@@ -6,7 +6,7 @@ function App() {
 
   return (
     <>
-      <p>Hello React</p>
+      <p>Hello React </p>
     </>
   );
 }
