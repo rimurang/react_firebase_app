@@ -1,30 +1,35 @@
-import Child from "./Child";
-import { useState } from "react";
-
 function App() {
-  // count 상태 변수와 setCount 상태 변경 함수 생성
-  const number = 10;
-  const [count, setCount] = useState(number);
-
-  // 이벤트 핸들러 함수 정의
-  const increase = () => {
-    setCount(count + 1);
-  };
-
-  const handleMessage = (msg) => {
-    alert("자식의 메세지 : " + msg);
-  };
+  const isLogin = true;
+  const userName = "봉미선";
+  const fruits = ["사과", "배", "바나나", "망고"];
+  const todos = [
+    { id: 1, text: "리액트 공부하기", done: true },
+    { id: 2, text: "파이어베이스 연결하기", done: false },
+    { id: 3, text: "운동하기", done: false },
+  ];
 
   return (
     <div>
-      <h3>useState</h3>
-      <p>현재 숫자 : {count}</p>
-      {/* 버튼 클릭 시 setCount 실행 -> state 값 변경 */}
-      <button onClick={increase}> +1 </button>
+      <h3>연산자</h3>
+      {/* 삼항연산자 */}
+      <p>{isLogin ? `${userName}님 환영합니다` : "로그인이 필요합니다"}</p>
 
-      <h3>콜백 전달 (= emit)</h3>
-      {/* 부모가 콜백 함수를 props로 전달 */}
-      <Child onSendMessage={handleMessage} />
+      {/* &&연산자 (true만) */}
+      {isLogin && <p>로그인 성공!</p>}
+
+      <h3>리스트렌더링</h3>
+      <ul>
+        {fruits.map((fruit, index) => (
+          <li key={index}>{fruit}</li>
+        ))}
+      </ul>
+
+      <h3>리스트렌더링 + 조건부 렌더링 응용</h3>
+      <ul>
+        {todos.map((todo, index) => (
+          <li key={index}>{todo.done ? <del>{todo.text}</del> : todo.text}</li>
+        ))}
+      </ul>
     </div>
   );
 }
