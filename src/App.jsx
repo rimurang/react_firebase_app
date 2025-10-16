@@ -1,6 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { db } from "./firebase";
-import { collection, addDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+} from "firebase/firestore";
 
 function App() {
   const isLogin = true;
@@ -29,13 +35,35 @@ function App() {
         content: text,
         createAt: new Date(),
       });
-      alert("저장 성공!");
+      //alert("저장 성공!");
       setText(""); // 입력창 초기화
+      await fetchMessages(); // 저장 후 다시 불러오기
     } catch (e) {
       console.error("저장 실패:", e);
-      alert("저장 실패!");
     }
   };
+
+  const [messages, setMessages] = useState([]); // Firestore 데이터 저장용 state
+
+  // Firestore에서 데이터 가져오는 함수
+  const fetchMessages = async () => {
+    try {
+      const q = query(collection(db, "messages"), orderBy("createAt", "asc"));
+      const querySnapshot = await getDocs(q);
+      const dataList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setMessages(dataList);
+    } catch (e) {
+      console.error("데이터 불러오기 실패 : ", e);
+    }
+  };
+
+  // useEffect : 컴포넌트가 처음 렌더링될 때 한 번 실행
+  useEffect(() => {
+    fetchMessages();
+  }, []);
   /* E: firebase */
 
   return (
@@ -71,6 +99,24 @@ function App() {
         placeholder="메시지 입력"
       />
       <button onClick={handleSubmit}>저장</button>
+
+      <h3>데이터 불러오기</h3>
+      {messages.length === 0 ? (
+        <p>데이터가 없습니다.</p>
+      ) : (
+        <ul>
+          {messages.map((msg) => (
+            <li key={msg.id}>
+              {msg.content}{" "}
+              <span style={{ color: "#888", fontSize: "12px" }}>
+                ({new Date(msg.createAt.seconds * 1000).toLocaleString()})
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <button onClick={fetchMessages}>데이터 다시 불러오기</button>
     </div>
   );
 }
