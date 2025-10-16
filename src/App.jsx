@@ -1,3 +1,7 @@
+import { useState } from "react";
+import { db } from "./firebase";
+import { collection, addDoc } from "firebase/firestore";
+
 function App() {
   const isLogin = true;
   const userName = "봉미선";
@@ -7,6 +11,32 @@ function App() {
     { id: 2, text: "파이어베이스 연결하기", done: false },
     { id: 3, text: "운동하기", done: false },
   ];
+
+  /* S: firebase */
+  const [text, setText] = useState(""); // 입력값 state
+
+  //  입력이벤트 처리(controlled component)
+  const handleChange = (e) => {
+    setText(e.target.value);
+  };
+
+  // Firestore에 데이터 저장
+  const handleSubmit = async () => {
+    if (text.trim() === "") return; // 빈값 방지
+
+    try {
+      await addDoc(collection(db, "messages"), {
+        content: text,
+        createAt: new Date(),
+      });
+      alert("저장 성공!");
+      setText(""); // 입력창 초기화
+    } catch (e) {
+      console.error("저장 실패:", e);
+      alert("저장 실패!");
+    }
+  };
+  /* E: firebase */
 
   return (
     <div>
@@ -30,6 +60,17 @@ function App() {
           <li key={index}>{todo.done ? <del>{todo.text}</del> : todo.text}</li>
         ))}
       </ul>
+
+      {/* firebase */}
+      <h2>* firebase</h2>
+      <h3>폼 입력 제어 (Controlled Components)</h3>
+      <input
+        type="text"
+        value={text}
+        onChange={handleChange}
+        placeholder="메시지 입력"
+      />
+      <button onClick={handleSubmit}>저장</button>
     </div>
   );
 }
