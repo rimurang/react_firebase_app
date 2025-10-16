@@ -15,3 +15,7 @@
 - 조건문(if, 삼항 연산자, &&)
 - 배열 데이터를 .map()으로 렌더링
 - key 역할 이해
+
+#### 5. 폼 입력 제어 + Firestore에 데이터 저장 (Create)
+- Firebase Firestore 연동
+- input을 useState로 제어 + 버튼 클릭 시 Firestore 컬렉션에 문서 저장
